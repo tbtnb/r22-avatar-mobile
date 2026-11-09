@@ -6,10 +6,15 @@ import {DentalTextureRenderer} from './dental-texture.js?v=upper-crown-r22';
 import {MouthEdgeBlend} from './mouth-edge-blend.js?v=lip-edge-r15';
 import {TongueSurfaceRenderer} from './tongue-surface.js?v=dental-occlusion-r21';
 import {neutralMouthMetrics} from './frame-metrics.js?v=stability-r9c';
-import {FrameCapture} from './frame-capture.js?v=performance-r11';
+import {FrameCapture} from './frame-capture.js?v=ios-rgba-guard';
 const $=id=>document.getElementById(id);
 const runtimeOptions=new URLSearchParams(location.search);
 const useSoftware=runtimeOptions.get('raster')!=='gpu',useDecoderCopy=runtimeOptions.get('capture')!=='canvas';
+const appleMobile=/iPhone|iPad|iPod/i.test(navigator.userAgent)||
+  (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+// Freeze the video in a canvas on iOS. Its hardware-decoder copy path can
+// return planar bytes despite a packed RGB request.
+const useVideoFrame=typeof VideoFrame==='function'&&!appleMobile;
 const syncDecoded=!['raf','independent'].includes(runtimeOptions.get('clock'));
 const useWasm=document.documentElement.dataset.runtime==='wasm';
 let browserRuntime=null;
@@ -46,9 +51,9 @@ if(video.requestVideoFrameCallback){
     video.requestVideoFrameCallback(onFrame);
     decodedTime=metadata.mediaTime;
     lastDecodedAt=performance.now();
-    if(ready&&(typeof VideoFrame!=='function'||syncDecoded)){
+    if(ready&&(!useVideoFrame||syncDecoded)){
       if(!busy)draw(now,metadata.mediaTime);
-      else if(typeof VideoFrame==='function'&&canDrive&&!document.hidden){
+      else if(useVideoFrame&&canDrive&&!document.hidden){
         // Keep only the latest decoded frame while one inference is in flight.
         // Start it immediately on completion, rather than losing a 33ms decoder
         // callback and waiting another full frame interval.
@@ -239,7 +244,7 @@ async function draw(now,mediaTime=decodedTime,providedSnapshot=null){
       coherentBase.width=video.videoWidth;coherentBase.height=video.videoHeight;
     }
     let frameSource;
-    if(typeof VideoFrame==='function'){
+    if(useVideoFrame){
       snapshot=providedSnapshot||new VideoFrame(video);frameSource=snapshot;
       mediaTime=snapshot.timestamp/1e6;stats.snapshotType='VideoFrame';
     }else{
@@ -345,7 +350,7 @@ function tick(now){
   scheduleFrame(now);
 }
 function scheduleFrame(now){
-  if(video.requestVideoFrameCallback&&!video.paused&&(typeof VideoFrame!=='function'||(syncDecoded&&performance.now()-lastDecodedAt<120)))return;
+  if(video.requestVideoFrameCallback&&!video.paused&&(!useVideoFrame||(syncDecoded&&performance.now()-lastDecodedAt<120)))return;
   if(now-lastTick<40)return;
   if(busy){stats.skippedFrames++;return;}
   lastTick=now-(now-lastTick)%40;

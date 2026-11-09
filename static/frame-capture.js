@@ -15,7 +15,14 @@ export class FrameCapture {
       if(this.bytes?.length!==length)this.bytes=new Uint8Array(length);
       layout=await frame.copyTo(this.bytes,options);
     }catch(error){this.unavailable=true;this.reason=error.message;return null;}
-    const bytes=this.bytes,out=this.pixels,size=this.size,stride=layout[0].stride,offset=layout[0].offset;
+    const {stride,offset}=layout[0]??{};
+    if(layout.length!==1||!Number.isInteger(stride)||stride<width*4||
+      !Number.isInteger(offset)||offset<0||offset+(height-1)*stride+width*4>this.bytes.length){
+      this.unavailable=true;
+      this.reason='Decoder did not return a packed RGBA frame';
+      return null;
+    }
+    const bytes=this.bytes,out=this.pixels,size=this.size;
     for(let y=0;y<size;y++){
       const sy=y0-top+(y+.5)*(y1-y0)/size-.5,iy=Math.floor(sy),ty=sy-iy;
       const row0=offset+Math.max(0,Math.min(height-1,iy))*stride,row1=offset+Math.max(0,Math.min(height-1,iy+1))*stride;
