@@ -1,0 +1,39 @@
+Attribution and license record
+
+Upstream: kleinlee/DH_live
+https://github.com/kleinlee/DH_live
+Snapshot: 4467e97cd97194c2c54762043cf121c6d313db12
+Upstream README declares: MIT License.
+
+Parts derived from the public source: Audio2Feature network definition;
+mouth deformation and mask shaders; build-time geometry and preparation helpers.
+Public checkpoints: lstm_model_epoch_325.pkl and epoch_40_new.pth, exported
+to ONNX for this independent runtime. They are not newly trained models.
+
+The upstream author states the DINet/LSTM checkpoints have no commercial
+copyright restrictions in this reply:
+https://github.com/kleinlee/DH_live/issues/123#issuecomment-6554621063
+
+The stock teeth reference 1_0_0.png and blendshape geometry originate in the
+same upstream repository. User avatar video was supplied by the user.
+The original packaged DHLiveMini.wasm is not used or distributed here.
+
+MIT license text (copyright belongs to the upstream authors and contributors):
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

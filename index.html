@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN" data-runtime="wasm">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#11121a">
+  <meta name="description" content="用示例语音或本地音频驱动 R22 数字人的口型。">
+  <title>R22 数字人 · 手机试玩</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./static/style.css?v=mobile-r22">
+  <link rel="stylesheet" href="./mobile.css?v=mobile-r22">
+</head>
+<body>
+<main class="phone">
+  <header class="phone-header">
+    <div class="brand"><span class="mark" aria-hidden="true">◈</span><div><h1>R22 数字人</h1><p>音频口型试玩</p></div></div>
+    <div class="online" role="status"><i id="status-dot" aria-hidden="true"></i><span id="connection">正在准备</span></div>
+  </header>
+
+  <section class="stage" aria-label="数字人预览">
+    <div class="video-viewport"><div class="video-wrap">
+      <video id="base-video" muted loop playsinline aria-label="数字人底板视频"></video>
+      <canvas id="coherent-base" aria-hidden="true"></canvas>
+      <canvas id="output" width="184" height="184" aria-label="数字人嘴部画面"></canvas>
+      <div id="loading">正在准备形象…</div>
+    </div></div>
+    <div class="stage-foot"><span id="play-label">载入中</span><span id="avatar-size">640 × 360</span><span id="fps-label">等待播放</span></div>
+  </section>
+
+  <section class="panel audio-panel" aria-labelledby="audio-title">
+    <h2 id="audio-title">让人物说话</h2>
+    <div class="audio-actions">
+      <button id="speak" class="primary" type="button" disabled>播放示例语音</button>
+      <div id="wasm-input">
+        <button id="choose-audio" type="button" disabled>选择本地音频</button>
+        <input id="audio-file" type="file" accept="audio/*,.wav,.mp3,.m4a,.ogg,.flac" hidden>
+      </div>
+    </div>
+    <div class="button-row"><button id="replay" type="button" disabled>重播语音</button><button id="stop" type="button" disabled>停止</button></div>
+    <p id="speech-status" class="status" role="status" aria-live="polite">模型加载后即可播放。</p>
+  </section>
+
+  <section class="panel zoom-panel" aria-labelledby="zoom-title">
+    <div class="panel-title"><h2 id="zoom-title">嘴部特写</h2>
+      <select id="zoom-view" aria-label="局部预览范围"><option value="mouth" selected>牙齿与嘴唇</option><option value="perioral">口周与下巴</option></select>
+    </div>
+    <canvas id="zoom" width="368" height="328" aria-label="口周联动画面"></canvas>
+  </section>
+
+  <details class="panel tuning">
+    <summary>口型设置</summary>
+    <button id="reset" class="text-button" type="button">恢复默认</button>
+    <label for="articulation">发音动作</label><select id="articulation"><option value="original">原版动作</option><option value="enhanced" selected>元音与圆唇增强</option></select>
+    <label for="appearance">嘴部外观</label><select id="appearance"><option value="teeth" selected>上下排牙齿优化</option><option value="preserve">保留原唇色与纹理</option><option value="detail">细节优化对照</option><option value="baseline">原模型对照</option></select>
+    <label for="offset">口型时间 <output id="offset-label">0 ms</output></label><input id="offset" type="range" min="-240" max="240" step="20" value="0">
+    <label for="gain">动作幅度 <output id="gain-label">1.00</output></label><input id="gain" type="range" min="0.6" max="1.4" step="0.05" value="1">
+  </details>
+  <footer>你选择的音频在设备上处理。</footer>
+
+  <div hidden>
+    <div id="text-controls"><textarea id="text"></textarea><span id="count"></span></div>
+    <button id="vowel-example" type="button"></button>
+    <span id="avatar-name"></span><span id="avatar-note"></span><span id="library-count"></span>
+    <select id="avatar-select" aria-label="底板" disabled></select><div id="video-library"></div>
+  </div>
+</main>
+<script type="module" src="./static/app.js?v=mobile-r22"></script>
+</body>
+</html>

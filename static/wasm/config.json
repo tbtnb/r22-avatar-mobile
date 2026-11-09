@@ -1,0 +1,1 @@
+{"fps":25,"audio_scale":0.5,"audio_advance_frames":5,"renderer":"models/renderer-lip-color-r5.onnx","detail_renderer":"models/renderer-detail-r17.onnx","baseline_renderer":"models/renderer.onnx","audio_model":"models/audio.onnx"}

@@ -1,0 +1,46 @@
+:root {
+  --bg: #11121a;
+  --panel: #1b1d2a;
+  --line: #303348;
+  --accent: #c4b5ff;
+  --muted: #a4a8bf;
+}
+body {
+  background: radial-gradient(ellipse 520px 340px at 50% 0, #24233b 0%, var(--bg) 82%);
+}
+.phone {
+  width: min(100%, 560px);
+  padding: max(18px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right))
+           max(24px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+  display: grid;
+  gap: 12px;
+}
+.phone-header {
+  gap: 10px;
+  margin-bottom: 3px;
+}
+.phone-header .brand { min-width: 0; gap: 10px; }
+.phone-header .mark { flex: none; width: 38px; height: 38px; }
+.phone-header h1 { font-size: 19px; }
+.phone-header .online { max-width: none; white-space: nowrap; }
+.phone .stage { border-radius: 16px; }
+.phone .stage-foot { gap: 10px; padding: 10px 12px; font-size: 12px; }
+.phone .panel { padding: 13px; }
+.audio-panel h2 { margin-bottom: 10px; }
+.audio-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.phone button:not(.text-button) { min-height: 46px; padding-inline: 6px; }
+.audio-actions button { width: 100%; }
+.audio-panel .status { min-height: 18px; margin-top: 8px; font-size: 12px; }
+.phone select { min-height: 44px; font-size: 16px; }
+.zoom-panel .panel-title { margin-bottom: 8px; }
+.phone #zoom { height: clamp(138px, 42vw, 208px); }
+.tuning summary { cursor: pointer; min-height: 26px; font-weight: 650; }
+.tuning[open] summary { margin-bottom: 8px; }
+.tuning #reset { min-height: 44px; font-size: 12px; }
+.tuning input[type=range] { height: 28px; }
+.phone footer { margin: 4px 1px 0; color: var(--muted); }
+@media (max-width: 340px) {
+  .phone-header h1 { font-size: 17px; }
+  .phone-header .online { font-size: 10px; }
+  .audio-actions { grid-template-columns: minmax(0, 1fr); }
+}
