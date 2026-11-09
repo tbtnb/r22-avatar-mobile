@@ -123,8 +123,8 @@ export function articulate3D(rig,pose,basis,guide,offsets=new Float32Array(rig.v
       // neighboring skin. Independently squeezing inner/outer rings stretches
       // the vermilion and can turn small rounded apertures inside out.
       const field=lip?1:horizontal*(1-smooth(w*.08,w*.52,Math.abs(y)));
-      const contraction=.34-.08*opening0;
-      dx=x*(-contraction*round*field+.055*spread*(lip?1:neighborhood));
+      const contraction=.18-.05*opening0;
+      dx=x*(-contraction*round*field+.035*spread*(lip?1:neighborhood));
       const roll=field*(1-smooth(w*.35,w*.70,Math.abs(x)));
       dz-=w*round*.070*roll;
       // Round the corners through a shared smooth field while retaining each
@@ -132,7 +132,7 @@ export function articulate3D(rig,pose,basis,guide,offsets=new Float32Array(rig.v
       const cornerInfluence=Math.exp(-(((Math.abs(x)/w-.46)/.25)**2))*field;
       dy+=(roundCenter-cornerY)*round*cornerInfluence;
       if(lip){
-        const half=(outerHalf*(1-rim)+innerHalf*rim)*(1-contraction*round+.055*spread);
+        const half=(outerHalf*(1-rim)+innerHalf*rim)*(1-contraction*round+.035*spread);
         const arc=Math.sqrt(Math.max(0,1-Math.min(1,Math.abs(x+dx)/half)**2));
         const thickness=(upperLip?rig.upperThickness:rig.lowerThickness)*(1-rim)*.85;
         const roundedY=roundCenter+(upperLip?-1:1)*(actualGap*.5+thickness)*arc;

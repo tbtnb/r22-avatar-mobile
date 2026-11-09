@@ -1,9 +1,9 @@
 import {assetURL} from './asset-url.js';
 // Geometry rasterization adapted from DH_live (MIT); independent lifecycle and buffers.
-import {calibratePose} from './pose-calibration.js?v=stability-r9c';
-import {articulationRig,articulate3D,deformedVertices} from './articulation.js?v=tongue-coarticulation-r17';
+import {calibratePose} from './pose-calibration.js?v=mouth-stability-1';
+import {articulationRig,articulate3D,deformedVertices} from './articulation.js?v=mouth-stability-1';
 import {neutralMouthMetrics,lipApertureRatio} from './frame-metrics.js?v=stability-r9c';
-import {SoftwareMouthRasterizer} from './geometry-rasterizer.js?v=tongue-coarticulation-r17';
+import {SoftwareMouthRasterizer} from './geometry-rasterizer.js?v=mouth-stability-1';
 import {dentalVisibility} from './dental-visibility.js?v=tongue-coarticulation-r17';
 export class MouthGeometry {
   dispose(){
@@ -78,7 +78,15 @@ export class MouthGeometry {
     gl.viewport(0,0,this.size,this.size);
   }
   condition(frame,pose){return calibratePose(pose,frame,this.avatar.vertices,this.basis,this.avatar.mouthIndices);}
-  renderPair(frame,pose,guide=null){return this.rasterizer.render(frame,pose,guide);}
+  renderPair(frame,pose,guide=null){
+    const pair=this.rasterizer.render(frame,pose,guide);
+    const projected=this.rasterizer.projected;
+    for(const [i,id] of this.outerIndices.entries()){
+      this.outerOpening[i*2]=projected[id*6];
+      this.outerOpening[i*2+1]=projected[id*6+1];
+    }
+    return pair;
+  }
   setArticulation(pose,guide){
     articulate3D(this.articulationRig,pose,this.basis,guide,this.articulationOffsets);
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER,this.articulationBuffer);

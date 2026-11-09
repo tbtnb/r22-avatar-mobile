@@ -1,6 +1,6 @@
 import {assetURL} from './asset-url.js';
-import {MouthGeometry} from './geometry.js?v=tongue-coarticulation-r17';
-import {articulationRig} from './articulation.js?v=tongue-coarticulation-r17';
+import {MouthGeometry} from './geometry.js?v=mouth-stability-1';
+import {articulationRig} from './articulation.js?v=mouth-stability-1';
 import {DentalDetailMatcher} from './dental-detail.js?v=dental-blend-r13';
 
 export function dentalUVs(avatar,category=3){

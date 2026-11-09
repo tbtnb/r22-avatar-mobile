@@ -10,7 +10,7 @@ export function calibratePose(pose,frame,vertices,basis,ix) {
   const width=neutral.widthX,upper=neutral.upper,lower=neutral.lower;
   const definitions=[
     [ix.lowerInner,ix.upperInner,1,.35,width*.30],
-    [ix.right,ix.left,0,width*.72,width*1.06],
+    [ix.right,ix.left,0,width*.91,width*1.04],
     [ix.upperInner,ix.upperOuter,1,upper*.80,upper*1.15],
     [ix.lowerOuter,ix.lowerInner,1,lower*.80,lower*1.15]
   ];

@@ -1,8 +1,9 @@
 import {assetURL} from './asset-url.js';
 import {BrowserRuntime} from './wasm/browser-runtime.js?v=wasm-r22';
-import {MouthGeometry} from './geometry.js?v=tongue-coarticulation-r17';
+import {MouthGeometry} from './geometry.js?v=mouth-stability-1';
 import {alignDentalMesh} from './dental-geometry.js?v=tongue-coarticulation-r17';
-import {DentalTextureRenderer} from './dental-texture.js?v=upper-crown-r22';
+import {DentalTextureRenderer} from './dental-texture.js?v=mouth-stability-1';
+import {MouthCompositeMask} from './mouth-composite-mask.js?v=mouth-stability-1';
 import {MouthEdgeBlend} from './mouth-edge-blend.js?v=lip-edge-r15';
 import {TongueSurfaceRenderer} from './tongue-surface.js?v=dental-occlusion-r21';
 import {neutralMouthMetrics} from './frame-metrics.js?v=stability-r9c';
@@ -36,6 +37,7 @@ const geometry=new MouthGeometry();
 const detailGeometry=new MouthGeometry();
 const dentalRenderer=new DentalTextureRenderer();
 const mouthEdgeBlend=new MouthEdgeBlend();
+const compositeMask=new MouthCompositeMask(crop.width);
 const tongueSurface=new TongueSurfaceRenderer();
 const neuralOutput=document.createElement('canvas');neuralOutput.width=neuralOutput.height=184;
 const neuralOutputCtx=neuralOutput.getContext('2d');
@@ -184,6 +186,13 @@ function sampleArticulation(){
     if(position>=-.12*active.fps&&position<values.length){
       const i=Math.max(0,Math.floor(position)),j=Math.min(i+1,values.length-1),mix=Math.max(0,position-i);
       guide=values[i].map((x,k)=>x*(1-mix)+values[j][k]*mix);
+      // Soften width and guide-strength changes while keeping closure and bite cues.
+      const before=values[Math.max(0,i-1)],after=values[Math.min(values.length-1,j+1)];
+      for(const k of [0,1,5]){
+        const previous=before[k]*(1-mix)+values[i][k]*mix;
+        const next=values[j][k]*(1-mix)+after[k]*mix;
+        guide[k]=.16*previous+.68*guide[k]+.16*next;
+      }
       guide[4]=Math.min(1,guide[4]*gain);
       const dental=active.articulation.dental?.values;
       if(dental)guide.toothLimit=dental[i]*(1-mix)+dental[j]*mix;
@@ -316,10 +325,11 @@ async function draw(now,mediaTime=decodedTime,providedSnapshot=null){
       if(blended){ctx.clearRect(0,0,368,368);ctx.drawImage(blended,0,0);}
       renderSample.edgeBlendMs=performance.now()-startEdge;stats.edgeBlend=blended?'seam-band':'idle-pass-through';
     }else ctx.putImageData(new ImageData(rgba,184,184),0,0);
+    const neutral=neutralMouthMetrics(frame,avatar.vertices,avatar.mouthIndices);
+    compositeMask.apply(ctx,frame,activeGeometry.outerIndices,activeGeometry.outerOpening,neutral.width);
     output.style.left=x0/video.videoWidth*100+'%';output.style.top=y0/video.videoHeight*100+'%';
     output.style.width=(x1-x0)/video.videoWidth*100+'%';output.style.height=(y1-y0)/video.videoHeight*100+'%';
-    // Neutral and audio-driven mouths are always fully composited. Only the
-    // coefficients ease in/out, so starting speech never reveals raw video.
+    // Keep the same local composite through idle and speech transitions.
     output.style.opacity='1';
     baseCtx.drawImage(frameSource,0,0);coherentBase.style.display='block';
     output.style.display='block';drawZoom(frame,true,frameSource);

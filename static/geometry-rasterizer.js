@@ -1,7 +1,7 @@
 // CPU implementation of mouth.vert/mouth.frag for the two 184px neural inputs.
 // These buffers go directly to CPU ONNX; rasterizing here avoids two blocking
 // GPU -> CPU readPixels transfers per frame. Dental display stays on the GPU.
-import {articulate3D,deformedVertices} from './articulation.js?v=tongue-coarticulation-r17';
+import {articulate3D,deformedVertices} from './articulation.js?v=mouth-stability-1';
 import {neutralMouthMetrics} from './frame-metrics.js?v=stability-r9c';
 import {dentalVisibility,dentalCoverage} from './dental-visibility.js?v=tongue-coarticulation-r17';
 
